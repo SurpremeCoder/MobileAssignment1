@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -16,12 +17,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class MenuScreen implements Screen {
-    MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
+    MyGdxGame controller;
     // constructor to keep a reference to the main Game class
 
     private Skin skin;
@@ -35,11 +37,11 @@ public class MenuScreen implements Screen {
     //private Button playBtn;
     //private Button exitBtn;
 
-    private ImageButton playBtn;
-    private ImageButton exitBtn;
+    private final ImageButton playBtn;
+    private final ImageButton exitBtn;
 
     public MenuScreen(MyGdxGame game){
-        this.game = game;
+        this.controller = game;
         stage = new Stage();
         //float buttonSize = 0.2f * 0.2f;
 
@@ -51,13 +53,23 @@ public class MenuScreen implements Screen {
         Drawable drawablePlayBtn = new TextureRegionDrawable(new TextureRegion(playBtnTexture));
         playBtn = new ImageButton(drawablePlayBtn);
         playBtn.setPosition(Gdx.graphics.getWidth() /2 - 100f, 200);
+        playBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                controller.changeScreen("play");
+            }
+        });
+        /*
         playBtn.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 //MenuScreen menuScreen = new MenuScreen(game);
                 //game.setScreen(menuScreen);
                 //game.gotoGameScreen();
-                game.getScreen();
+                //super.g
+                game.changeScreen("menu");
+
+                //game.getScreen();
                 Gdx.app.log("MenuScreen: ","bbbbb");
                 return true;
             }
@@ -66,12 +78,30 @@ public class MenuScreen implements Screen {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
             }
-        });
+        }); */
         stage.addActor(playBtn);
         Drawable drawableExitBtn = new TextureRegionDrawable(new TextureRegion(exitBtnTexture));
         exitBtn = new ImageButton(drawableExitBtn);
         exitBtn.setPosition(Gdx.graphics.getWidth() /2 - 100f, 100);
+        exitBtn.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                //MenuScreen menuScreen = new MenuScreen(game);
+                //game.setScreen(menuScreen);
+                //game.gotoGameScreen();
+                //super.g
 
+                Gdx.app.exit();
+                //game.getScreen();
+
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                super.touchUp(event, x, y, pointer, button);
+            }
+        });
         stage.addActor(exitBtn);
 
         //playBtn=new ImageButton()
@@ -146,11 +176,11 @@ public class MenuScreen implements Screen {
     public void render(float f) {
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.batch.begin();
+        controller.batch.begin();
         stage.draw();
         //game.batch.draw(playBtn, Gdx.graphics.getWidth()/2-100, 300);
         //game.batch.draw(exitBtn,Gdx.graphics.getWidth()/2-100,200);
-        game.batch.end();
+        controller.batch.end();
         /*
 
 
@@ -161,7 +191,11 @@ public class MenuScreen implements Screen {
 
     }
     @Override
-    public void dispose() { }
+    public void dispose() {
+        playBtnTexture.dispose();
+        exitBtnTexture.dispose();
+        stage.dispose();
+    }
     @Override
     public void resize(int width, int height) { }
     @Override
