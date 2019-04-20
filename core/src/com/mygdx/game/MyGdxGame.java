@@ -27,13 +27,7 @@ public class MyGdxGame extends Game implements ApplicationListener {
 		batch=new SpriteBatch();
 		this.setScreen(new MenuScreen(this));
 		Gdx.app.log("MyGdxGame: ","about to change screen to menuScreen");
-
-
-
 		Gdx.app.log("MyGdxGame: "," create");
-// Change screens to the menu
-		//setScreen(new MenuScreen(this));
-		//Gdx.app.log("MyGdxGame: ","changed screen to menuScreen");
 	}
 
 	/**
