@@ -195,6 +195,7 @@ public class MenuScreen implements Screen {
         playBtnTexture.dispose();
         exitBtnTexture.dispose();
         stage.dispose();
+        Gdx.input.setInputProcessor(null);
     }
     @Override
     public void resize(int width, int height) { }
@@ -209,6 +210,7 @@ public class MenuScreen implements Screen {
     }
     @Override
     public void hide() {
+        Gdx.input.setInputProcessor(null);
         Gdx.app.log("MenuScreen: ","menuScreen hide called");
     }
 }

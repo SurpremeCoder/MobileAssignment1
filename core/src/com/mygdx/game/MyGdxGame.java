@@ -36,12 +36,17 @@ public class MyGdxGame extends Game implements ApplicationListener {
 		//Gdx.app.log("MyGdxGame: ","changed screen to menuScreen");
 	}
 
+	/**
+	 Changes the screen shown based on a specified value
+	 @param screen the value of the screen that should be shown as a string
+	 */
 	public void changeScreen(String screen){
 		if(screen=="menu"){
 			if(menuScreen==null){
 				menuScreen=new MenuScreen(this);
 			}
 			setScreen(menuScreen);
+			//Gdx.input.setInputProcessor(menuScreen);
 		}else{
 			if(gameScreen==null){
 				gameScreen=new GameScreen(this);

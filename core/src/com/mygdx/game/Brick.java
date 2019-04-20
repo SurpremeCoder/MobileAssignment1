@@ -1,6 +1,9 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+/** A class to represent a brick
+ *Contains the x and y position of the brick, its status (whether its still alive or not) and its sprite
+ */
 
 public class Brick {
     private int posX;
@@ -9,10 +12,8 @@ public class Brick {
     private boolean status;
 
     Brick(int posX, int posY, Sprite brickSprite, boolean status){
-        //this.posX=posX;
-        //this.posY=posY;
-        this.posY=50;
-        this.posX=50;
+        this.posX=posX;
+        this.posY=posY;
         this.brickSprite =brickSprite;
         brickSprite.setPosition(posX, posY);
         this.status=status;
