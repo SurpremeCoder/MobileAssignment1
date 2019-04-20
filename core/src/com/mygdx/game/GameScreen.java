@@ -28,9 +28,11 @@ public class GameScreen implements Screen {
     Stage stage;
     float dt;
     boolean ballMoving=false;
-    float movementFactor=2f;
+    float movementFactor=3f;
     Vector2 ballVector;
     boolean firstMove=true;
+    char xDirection='+';
+    char yDirection='+';
 
     public GameScreen(MyGdxGame game){
 
@@ -84,6 +86,7 @@ public class GameScreen implements Screen {
 
     public Vector2 ballPath(){
         double choice=Math.random();
+        Gdx.app.log("qqq: ","choice: " + choice);
         Vector2 vector;
         if(choice<0.5){
             vector=new Vector2(2,2);
@@ -93,13 +96,66 @@ public class GameScreen implements Screen {
         return vector;
     }
 
+    public void calculateCollision(){
+        Gdx.app.log("vvv: ","x: " + ballVector.x + " y: " + ballVector.y);
+        boolean hitBrick=false;
+        for(int i=0; i<bricks.length; i++){
+            if(bricks[i].getStatus()==true){
+                if (bricks[i].getSprite().getBoundingRectangle().overlaps(
+                    ball.getBoundingRectangle())) {
+                    Gdx.app.log("KKKK: ", "overlaps");
+                    bricks[i].setStatus(false);
+                    hitBrick=true;
+                    break;
+                }
+            }
+        }
+        if(hitBrick){
+
+        }
+        else{
+            if (ballVector.x < 0) {
+                Gdx.app.log("vvv: ", "ball outside left");
+                xDirection = '+';
+                yDirection = randomDirection();
+                //double direction=Math.random();
+                //ballVector.y=(float)direction;
+                //movementFactor=-1;
+                ballPath();
+            } else if (ballVector.x > 640) {
+                Gdx.app.log("vvv: ", "ball outside right");
+                xDirection = '-';
+                yDirection = randomDirection();
+                //double direction=Math.random();
+                ballPath();
+            } else if (ballVector.y < 0) {
+                Gdx.app.log("vvv: ", "ball outside top");
+                ballPath();
+            } else if (ballVector.y > 480) {
+                Gdx.app.log("vvv: ", "ball outside bottom");
+                xDirection = randomDirection();
+                yDirection = '-';
+                ballPath();
+            }
+        }
+    }
+
+    public char randomDirection(){
+        double direction=Math.random();
+        if(direction<0.5){
+            return '+';
+        }else{
+            return '-';
+        }
+    }
+
     public void render(float f) {
         Gdx.app.log("GameScreen: ","GameScreen render");
 
         dt = Gdx.graphics.getDeltaTime(); //delta time
        Gdx.gl.glClearColor(1,0,0,1);
        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        controller.batch.setProjectionMatrix(camera.combined);
+       controller.batch.setProjectionMatrix(camera.combined);
        controller.batch.begin();
         //Gdx.app.log("GameScreen: ","posX" + bricks[0].getPosX() + " posY" + bricks[0].getPosY());
        //Sprite gg=bricks[10].getSprite();
@@ -115,10 +171,12 @@ public class GameScreen implements Screen {
             return true;
         } */
 
-        Gdx.app.log("GameScreen: ","mouseX" + Gdx.input.getX());
        for(int i=0; i<bricks.length;i++){
-           if(bricks[i].getStatus()) {
+           Gdx.app.log("brick: " + i," status " + bricks[i].getStatus());
+           if(bricks[i].getStatus()==true) {
                bricks[i].getSprite().draw(controller.batch);
+           }else{
+               Gdx.app.log("GameScreenJJJJJJJ: ","brick deleted!");
            }
        }
         paddle.setPosition(Gdx.input.getX()-30, 32);
@@ -126,21 +184,34 @@ public class GameScreen implements Screen {
        if(gameStarted){
            Gdx.app.log("GameScreen: ","STARTED");
            if(firstMove){
-               ballVector=new Vector2(paddle.getX()+10,paddle.getY()+10);
+               ballVector=new Vector2(paddle.getX(),paddle.getY()+10);
+               xDirection=randomDirection();
+
                firstMove=false;
                ballMoving=true;
            }else {
+               calculateCollision();
                if (!ballMoving) {
                    ballVector = ballPath();
                    ball.setPosition(ballVector.x, ballVector.y);
                    ballMoving = true;
                    Gdx.app.log("GameScreen: ", "now moving" + ballVector.x + " y" + ballVector.y);
                } else {
-                   float x = ballVector.x + movementFactor;
-                   float y = ballVector.y + movementFactor;
-                   ball.setPosition(x, y);
-                   movementFactor += 2;
-                   Gdx.app.log("GameScreen: ", "x" + x + " y " + y);
+                   if(xDirection=='+'){
+                       ballVector.x=ballVector.x + movementFactor ;
+                   }else{
+                       ballVector.x=ballVector.x - movementFactor ;
+                   }
+                   Gdx.app.log("tGameScreen: ", "y direction" + yDirection);
+                   if(yDirection=='+'){
+                       ballVector.y = ballVector.y + movementFactor;
+                   }else{
+                       ballVector.y = ballVector.y - movementFactor;
+                   }
+
+                   ball.setPosition(ballVector.x, ballVector.y);
+                   //movementFactor += 2;
+                   //Gdx.app.log("GameScreen: ", "x" + x + " y " + y);
                }
            }
 
@@ -156,8 +227,8 @@ public class GameScreen implements Screen {
         ball.draw(controller.batch);
        //ball.setPosition()
         //paddle.setPosition(Gdx.graphics.getWidth()/2-20,32);
-
         controller.batch.end();
+
 
     }
 

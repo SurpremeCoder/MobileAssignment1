@@ -32,6 +32,6 @@ public class Brick {
         return status;
     }
     public void setStatus(boolean status){
-        status=status;
+        this.status=status;
     }
 }
